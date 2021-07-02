@@ -25,10 +25,14 @@
 
             $UsrName=$_POST['UsrNm'];
             $Email=$_POST['Email'];
+            $Page=htmlspecialchars($_POST['HP']);
             $Msg=htmlspecialchars($_POST['MSG']);
+
+            $Page=$mysql->real_escape_string($Page);
+            $Msg=$mysql->real_escape_string($Msg);
            
-            $mysql->query("INSERT INTO `entry`(`UserName`,`E-mail`,`Text`,`IP`,`BrowInfo`,`DateTime`) 
-                          VALUES('$UsrName','$Email','$Msg','$IP','$Browser','$datetime' )");
+            $mysql->query("INSERT INTO `entry`(`UserName`,`E-mail`,`Homepage`,`Text`,`IP`,`BrowInfo`,`DateTime`) 
+                          VALUES('$UsrName','$Email','$Page','$Msg','$IP','$Browser','$datetime' )");
 
     echo json_encode($mysql->error);    
 

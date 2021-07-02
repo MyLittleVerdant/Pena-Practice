@@ -2,34 +2,51 @@ document.forms.addForm.onsubmit = async function (e) {
     e.preventDefault();
    
     const data = new URLSearchParams(new FormData(document.forms.addForm));
-    var flag=true;
+    var flag=false;
+    var denial=Check();
 
+
+
+    if (!denial) {
+
+        //CAPTCHA
     let response = await fetch('/verify_captcha.php', {
         method: 'POST',
         body: data
       })
-
+      
+      
       let result = await response.json();
 
-      var denial=Check(result);
 
-      if (!denial) {
+    if(result!="OK")
+    {
+        document.querySelector('.test').innerHTML = result;
+        flag=false;
+    }
+    else
+    {
+        document.querySelector('.test').innerHTML = "";
+        flag=true;
+    }   
+    //    
+    if(flag)
+    {
         let response = await fetch('/Script/NewEntry.php', {
             method: 'POST',
             body: data
           })
           let result = await response.json();
-          console.log(result);
+          
           location.reload();
       }
-
-      
-   
+    }
+        
 }
 
 
 
-function Check(data) {
+function Check() {
     var errCount = 0;
     
 
@@ -58,21 +75,6 @@ function Check(data) {
        else
             document.querySelector('.mail').innerHTML = ""
 
-    //CAPTCHA
-    if (document.querySelector('.CAPTCHA').value.length == 0) {
-        document.querySelector('.test').innerHTML = "Required field!"
-        errCount++;
-    }
-    else if(data!="OK")
-    {
-        document.querySelector('.test').innerHTML = data;
-        errCount++;
-    }
-    else
-    {
-        document.querySelector('.test').innerHTML = "";
-        
-    }
 
     //MSG
     if (document.querySelector(' input[name="MSG"]').value.length == 0) {
@@ -92,7 +94,10 @@ function validateMail(email) {
 }
 
 function validateName(usrnm) {
-    var reg = /^(?:[�-��a-z\d]*[�-��a-z]\d[�-��a-z\d]*$|[�-��a-z\d]*\d[�-��a-z][�-��a-z\d]*$)/i;
+    var reg = /^(?:^[0-9a-zA-Z]+$)/i;
+    //var reg =/^(?:[в-яёa-z\d]*[а-яёa-z]\d[в-яёa-z\d]*$|[в-яёa-z\d]*\d[в-яёa-z][в-яёa-z\d]*$)/i;
+    
+
     return reg.test(usrnm);
 }
 

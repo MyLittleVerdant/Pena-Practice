@@ -28,40 +28,40 @@ class CaptchaVerify
     {
         $this->session_read();
 
-        $array = array(
-            1    => $this->answer_time,
-            2    => $this->captcha_field,
-            3    => $this->captcha_value,
-           
-        );
-        // echo json_encode($array);
+        // $array = array(
+        //     1    => $this->answer_time,
+        //     2    => $this->captcha_field,
+        //     3    => $this->captcha_value,
+        //     4    => $_POST[$this->captcha_field],
+        // );
+            //echo json_encode($array);
         
 
         if (isset($_SESSION[$_SERVER['REMOTE_ADDR']]) && $_SESSION[$_SERVER['REMOTE_ADDR']] >= 10)
-            echo json_encode('Вы ввели слишком много неверных капчей! Обратитесь за помощью к администратору');
+            echo json_encode('You have entered too many incorrect captchas!');
 
-        if (!empty($this->captcha_value) && !empty($this->captcha_field) && !empty($this->answer_time))
+        elseif (!empty($this->captcha_value) && !empty($this->captcha_field) && !empty($this->answer_time))
         {
             $this->current_time = strtotime(date('d-m-Y H:i:s'));
 
             if ($this->current_time - $this->answer_time < 3)
-                echo json_encode('Вы или робот или вводите капчу слишком быстро!');
-            if ($_POST[$this->captcha_field] == '')
-                echo json_encode('Робот, уходи!');
+                echo json_encode('Too fast!');
 
-            if (md5(md5($_POST[$this->captcha_field])) == $this->captcha_value)
+            elseif ($_POST[$this->captcha_field] == '')
+                echo json_encode('Required field!');
+
+            elseif (md5(md5($_POST[$this->captcha_field])) == $this->captcha_value)
             {
                 unset($_SESSION['captcha_value']);
                 unset($_SESSION['captcha_field']);
                 unset($_SESSION['answer_time']);
-                echo json_encode ('OK');
+                echo  json_encode('OK');
 
-            }
-                
+            }  
             else
-                echo json_encode('Неверная капча!');
+                echo json_encode('Invalid captcha!');
         }
-        else echo json_encode($array);
+        //else echo json_encode($array);
         
      }
 }
