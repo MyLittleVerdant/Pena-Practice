@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Июл 01 2021 г., 17:29
+-- Время создания: Июл 05 2021 г., 10:36
 -- Версия сервера: 8.0.24
 -- Версия PHP: 8.0.7
 
@@ -39,13 +39,6 @@ CREATE TABLE `entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
--- Дамп данных таблицы `entry`
---
-
-INSERT INTO `entry` (`Id`, `UserName`, `E-mail`, `Homepage`, `Text`, `IP`, `BrowInfo`, `DateTime`) VALUES
-(1, 'asd123', 'asd@mail.com', NULL, 'asd', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36', '1/7/2021  16:30:1');
-
---
 -- Индексы сохранённых таблиц
 --
 
@@ -63,7 +56,7 @@ ALTER TABLE `entry`
 -- AUTO_INCREMENT для таблицы `entry`
 --
 ALTER TABLE `entry`
-  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
