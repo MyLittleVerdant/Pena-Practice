@@ -16,7 +16,7 @@ class CaptchaValue implements CaptchaInterface
     {
         session_start();
         
-        $_SESSION['captcha_value'] = md5(md5($code));
+        $_SESSION['captcha_value'] = md5($code);
         $_SESSION['answer_time'] = strtotime(date('d-m-Y H:i:s'));
     }
 

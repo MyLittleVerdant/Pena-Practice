@@ -50,7 +50,7 @@ class CaptchaVerify
             elseif ($_POST[$this->captcha_field] == '')
                 echo json_encode('Required field!');
 
-            elseif (md5(md5($_POST[$this->captcha_field])) == $this->captcha_value)
+            elseif (md5($_POST[$this->captcha_field]) == $this->captcha_value)
             {
                 unset($_SESSION['captcha_value']);
                 unset($_SESSION['captcha_field']);

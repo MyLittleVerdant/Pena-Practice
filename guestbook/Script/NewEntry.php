@@ -6,13 +6,13 @@
     $user = 'root'; // имя пользователя
     $password = 'greenhood13'; // пароль
 
-    $mysql=new mysqli($host, $user, $password, $database); 
+    $mysql=new PDO("mysql:host=localhost;dbname=guestbook",$user,$password); 
 
     $client  = @$_SERVER['HTTP_CLIENT_IP'];
     $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
     $remote  = @$_SERVER['REMOTE_ADDR'];
 
-    //$Browser=strval($_SERVER["HTTP_USER_AGENT"]);
+    
     $Browser=$_SERVER["HTTP_USER_AGENT"];
     
     $datetime = getdate();
@@ -21,22 +21,23 @@
     if(filter_var($client, FILTER_VALIDATE_IP)) $IP = $client;
         elseif(filter_var($forward, FILTER_VALIDATE_IP)) $IP = $forward;
             else $IP = $remote;
-    //$IP=strval($IP);
 
-            $UsrName=$_POST['UsrNm'];
-            $Email=$_POST['Email'];
-            $Page=htmlspecialchars($_POST['HP']);
+            $UsrName=htmlspecialchars($_POST['UsrNm']);
+            $Email=htmlspecialchars($_POST['Email']);
+            $HPage=htmlspecialchars($_POST['HP']);
             $Msg=htmlspecialchars($_POST['MSG']);
 
-            $Page=$mysql->real_escape_string($Page);
-            $Msg=$mysql->real_escape_string($Msg);
-           
-            $mysql->query("INSERT INTO `entry`(`UserName`,`E-mail`,`Homepage`,`Text`,`IP`,`BrowInfo`,`DateTime`) 
-                          VALUES('$UsrName','$Email','$Page','$Msg','$IP','$Browser','$datetime' )");
+            $params=['UsrName'=>$UsrName,'Email'=>$Email,'HPage'=>$HPage,'Msg'=>$Msg];
 
-    echo json_encode($mysql->error);    
+    
+            $query=$mysql->prepare("INSERT INTO `entry`(`UserName`,`E-mail`,`Homepage`,`Text`,`IP`,`BrowInfo`,`DateTime`) 
+            VALUES(:UsrName,:Email,:HPage,:Msg,'$IP','$Browser','$datetime' )");
 
-    $mysql->close();  
+            $query->execute($params);
+
+    echo json_encode($query->errorInfo());    
+
+    
 
 
 
