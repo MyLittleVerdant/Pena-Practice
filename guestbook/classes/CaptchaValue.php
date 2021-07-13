@@ -5,43 +5,44 @@ include('CaptchaInterface.php');
 class CaptchaValue implements CaptchaInterface
 {
 
-    private $font_dir;
+    private $font_dir = '';
 
     public function __construct()
     {
         $this->font_dir = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'fonts' . DIRECTORY_SEPARATOR;
     }
 
-    public function sessionWrite($code)
+    public function session_write($code)
     {
         session_start();
-
+        
         $_SESSION['captcha_value'] = md5($code);
         $_SESSION['answer_time'] = strtotime(date('d-m-Y H:i:s'));
     }
 
-    public function generateCode(): string
+    public function generate_code()
     {
         $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $length = rand(4, 6);
         $numChars = strlen($chars);
 
         $str = '';
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; $i++)
+        {
             $str .= substr($chars, rand(1, $numChars) - 1, 1);
         }
 
         $array_mix = preg_split('//', $str, -1, PREG_SPLIT_NO_EMPTY);
-        srand((float)microtime() * 1000000);
+        srand((float) microtime() * 1000000);
         shuffle($array_mix);
 
         $result = implode("", $array_mix);
-        $this->sessionWrite($result);
+        $this->session_write($result);
 
         return $result;
     }
 
-    public function captchaImage($code)
+    public function captcha_image($code)
     {
         $image = imagecreatetruecolor(150, 70);
         imagesetthickness($image, 2);
@@ -50,7 +51,8 @@ class CaptchaValue implements CaptchaInterface
         imagefill($image, 0, 0, $background_color);
 
         $linenum = rand(3, 5);
-        for ($i = 0; $i < $linenum; $i++) {
+        for ($i = 0; $i < $linenum; $i++)
+        {
             $color = imagecolorallocate($image, rand(0, 150), rand(0, 100), rand(0, 150));
             imageline($image, rand(0, 150), rand(1, 70), rand(20, 150), rand(1, 70), $color);
         }
@@ -59,31 +61,25 @@ class CaptchaValue implements CaptchaInterface
         $font_size = rand(20, 30);
         $x = rand(0, 10);
 
-        for ($i = 0; $i < strlen($code); $i++) {
+        for ($i = 0; $i < strlen($code); $i++)
+        {
             $x += 20;
             $letter = substr($code, $i, 1);
             $color = imagecolorallocate($image, rand(0, 200), 0, rand(0, 200));
             $current_font = rand(0, sizeof($font_arr) - 1);
 
-            imagettftext(
-                $image,
-                $font_size,
-                rand(-10, 10),
-                $x,
-                rand(50, 55),
-                $color,
-                $this->font_dir . $font_arr[$current_font],
-                $letter
-            );
+            imagettftext($image, $font_size, rand(-10, 10), $x, rand(50, 55), $color, $this->font_dir . $font_arr[$current_font], $letter);
         }
 
         $pixels = rand(2000, 4000);
-        for ($i = 0; $i < $pixels; $i++) {
+        for ($i = 0; $i < $pixels; $i++)
+        {
             $color = imagecolorallocate($image, rand(0, 200), rand(0, 200), rand(0, 200));
             imagesetpixel($image, rand(0, 150), rand(0, 150), $color);
         }
 
-        for ($i = 0; $i < $linenum; $i++) {
+        for ($i = 0; $i < $linenum; $i++)
+        {
             $color = imagecolorallocate($image, rand(0, 255), rand(0, 200), rand(0, 255));
             imageline($image, rand(0, 20), rand(1, 50), rand(150, 180), rand(1, 50), $color);
         }

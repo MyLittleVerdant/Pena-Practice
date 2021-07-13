@@ -3,6 +3,6 @@
 include('classes' . DIRECTORY_SEPARATOR . 'CaptchaField.php');
 
 $captcha_field = new CaptchaField();
-$captcha_code = $captcha_field->generateCode();
+$captcha_code = $captcha_field->generate_code();
 
 include_once('guestbook.php');

@@ -1,102 +1,109 @@
 document.forms.addForm.onsubmit = async function (e) {
     e.preventDefault();
-
+   
     const data = new URLSearchParams(new FormData(document.forms.addForm));
-    var flag = false;
-    var denial = Check();
+    var flag=false;
+    var denial=Check();
+
 
 
     if (!denial) {
+
         //CAPTCHA
-        let response = await fetch('/verify_captcha.php', {
+    let response = await fetch('/verify_captcha.php', {
+        method: 'POST',
+        body: data
+      })
+      
+      
+      let result = await response.json();
+
+
+    if(result!="OK")
+    {
+        document.querySelector('.test').innerHTML = result;
+        flag=false;
+    }
+    else
+    {
+        document.querySelector('.test').innerHTML = "";
+        flag=true;
+    }   
+    //    
+    if(flag)
+    {
+        let response = await fetch('/Script/NewEntry.php', {
             method: 'POST',
             body: data
-        })
-
-
-        let result = await response.json();
-
-
-        if (result !== "OK") {
-            document.querySelector('.test').innerHTML = result;
-            flag = false;
-        } else {
-            document.querySelector('.test').innerHTML = "";
-            flag = true;
-        }
-        //
-        if (flag) {
-            let response = await fetch('/Script/NewEntry.php', {
-                method: 'POST',
-                body: data
-            })
-            let result = await response.json();
-
-            location.reload();
-        }
+          })
+          let result = await response.json();
+          
+          location.reload();
+      }
     }
-
+        
 }
 
 
-function Check()
-{
-    var errCount = 0;
 
+function Check() {
+    var errCount = 0;
+    
 
     //UserName
-    if (document.querySelector(' input[name="UsrNm"]').value.length === 0) {
+    if (document.querySelector(' input[name="UsrNm"]').value.length == 0) {
         document.querySelector('.usrn').innerHTML = "Required field!"
         errCount++;
-    } else if (!validateName(document.querySelector(' input[name="UsrNm"]').value)) {
+    }
+    else if (!validateName(document.querySelector(' input[name="UsrNm"]').value)) {
         document.querySelector('.usrn').innerHTML = "Incorrect name!"
         errCount++;
-    } else {
-        document.querySelector('.usrn').innerHTML = "";
     }
+    else
+        document.querySelector('.usrn').innerHTML = "";
 
     //Email
-    if (document.querySelector(' input[name="Email"]').value.length === 0) {
+    if (document.querySelector(' input[name="Email"]').value.length == 0) {
         document.querySelector('.mail').innerHTML = "Required field!"
         errCount++;
-    } else if (!validateMail(document.querySelector(' input[name="Email"]').value)) {
-        document.querySelector('.mail').innerHTML = "Incorrect email!";
-        errCount++;
-    } else {
-        document.querySelector('.mail').innerHTML = "";
     }
+    else if (!validateMail(document.querySelector(' input[name="Email"]').value))
+    {
+        document.querySelector('.mail').innerHTML = "Incorrect email!"
+        errCount++;
+    }
+       else
+            document.querySelector('.mail').innerHTML = ""
 
 
     //MSG
-    if (document.querySelector(' input[name="MSG"]').value.length === 0) {
+    if (document.querySelector(' input[name="MSG"]').value.length == 0) {
         document.querySelector('.message').innerHTML = "Required field!"
         errCount++;
-    } else {
-        document.querySelector('.message').innerHTML = ""
     }
-
+    else
+        document.querySelector('.message').innerHTML = ""
+        
     return errCount;
 }
 
 
-function validateMail(email)
-{
-    var reg = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
+function validateMail(email) {
+    var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
     return reg.test(email);
 }
 
-function validateName(usrnm)
-{
-    var reg = /^[0-9a-zA-Z]+$/i;
+function validateName(usrnm) {
+    var reg = /^(?:^[0-9a-zA-Z]+$)/i;
     //var reg =/^(?:[в-яёa-z\d]*[а-яёa-z]\d[в-яёa-z\d]*$|[в-яёa-z\d]*\d[в-яёa-z][в-яёa-z\d]*$)/i;
-
+    
 
     return reg.test(usrnm);
 }
 
 
-function GetAllEntry()
-{
+
+function GetAllEntry() {
     let input = "Y";
     input = encodeURIComponent(input);
     var xhr = new XMLHttpRequest();
@@ -107,6 +114,7 @@ function GetAllEntry()
         if (xhr.readyState === 4 && xhr.status === 200) {
             var res = $.parseJSON(xhr.responseText);
             ShowAllEntry(res);
+
         }
     }
 
@@ -114,10 +122,9 @@ function GetAllEntry()
 
 }
 
-function ShowAllEntry(Array)
-{
+function ShowAllEntry(Array) {
     var table = document.getElementById('AllEntryTable-body');
-
+   
 
     for (var i = 0; i < Array.length; i++) {
         var tr = document.createElement('tr');
@@ -142,20 +149,23 @@ function ShowAllEntry(Array)
         Name.innerHTML = Array[i]['Text'];
         tr.appendChild(Name);
 
-
+       
         table.appendChild(tr);
     }
     Table();
 }
 
+function return_to_main() {
+    window.location.href = '../..';
+}
 
-function Table()
-{
 
+function Table() {
+    
     $('#AllEntryTable').DataTable({
         columnDefs: [
-            {orderable: false, targets: [2, 4]}
-        ],
+            { orderable: false, targets:[2, 4] }
+          ],
         info: false,
         "pagingType": "simple_numbers",
         "lengthMenu": [25],
